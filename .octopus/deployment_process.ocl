@@ -1,0 +1,99 @@
+step "Deploy Amazon ECS Service" {
+    package_requirement = "AfterPackageAcquisition"
+    properties = {
+        Octopus.Action.TargetRoles = "client"
+    }
+
+    action {
+        action_type = "aws-ecs"
+        step_package_version = "1.1.1"
+        worker_pool_variable = ""
+
+        packages "worker-tools" {
+            acquisition_location = "NotAcquired"
+            feed = "Docker Hub"
+            package_id = "octopusdeploy/worker-tools"
+            step_package_inputs_reference_id = "bbfedc39-bd1c-42e4-86c9-e93ac6601a2b"
+        }
+
+        inputs {
+            desiredCount = 1
+            maximumHealthPercent = 200
+            minimumHealthPercent = 100
+            name = "taskdef"
+
+            additionalTags {
+                enableEcsManagedTags = false
+            }
+
+            containers {
+                containerName = "name"
+                essential = true
+
+                containerImageReference {
+                    feedId = "Docker Hub"
+                    imageName = "octopusdeploy/worker-tools"
+                    referenceId = "bbfedc39-bd1c-42e4-86c9-e93ac6601a2b"
+                }
+
+                containerLogging {
+                    logDriver = "<none>"
+                    type = "manual"
+                }
+
+                containerStorage {
+                    readOnlyRootFileSystem = false
+                }
+
+                environmentVariables {
+                }
+
+                environmentVariables {
+                }
+
+                environmentVariables {
+                }
+
+                healthCheck {
+                }
+
+                networkSettings {
+                    disableNetworking = false
+                }
+
+                repositoryAuthentication {
+                    type = "default"
+                }
+            }
+
+            networkConfiguration {
+                autoAssignPublicIp = true
+
+                securityGroupIds {
+                    id = "secgroup"
+                }
+
+                subnetIds {
+                    id = "subnet"
+                }
+            }
+
+            task {
+                cpu = 256
+                memory = 512
+                taskExecutionRole = "ex role"
+                taskRole = "role ARN"
+
+                runtimePlatform {
+                    cpuArchitecture = "X86_64"
+                    operatingSystemFamily = "LINUX"
+                }
+            }
+
+            waitOption {
+                timeout = 30
+                type = "waitWithTimeout"
+            }
+        }
+    }
+}
